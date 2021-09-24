@@ -1,8 +1,9 @@
 from requests import Session as rqs
 from requests import ConnectTimeout, ConnectionError, HTTPError
+from bs4 import BeautifulSoup
 
 
-class WebPageData:
+class WebPageData():
     """
     Class named 'WebPageData', represents the webpage data from hacker news
 
@@ -65,3 +66,12 @@ class WebPageData:
                 continue
             else:
                 return r.text
+
+
+    def html_parser(self, web_content:str) -> str:
+        pass
+
+
+    def data_filter(self, html, vote_count):
+        pass
+
