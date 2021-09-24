@@ -3,7 +3,7 @@ from requests import ConnectTimeout, ConnectionError, HTTPError
 from bs4 import BeautifulSoup
 
 
-class WebPageData():
+class WebPageData:
     """
     Class named 'WebPageData', represents the webpage data from hacker news
 
@@ -13,6 +13,18 @@ class WebPageData():
         The source 'url_hn' for getting data from hacker news webpage.
     """
     url_hn = "https://news.ycombinator.com/news"
+
+    def __init__(self, web_content: str, vote_count: int) -> None:
+        self.web_content = web_content
+        self.vote_count = vote_count
+
+    def html_parser(self):
+        return BeautifulSoup(f"{self.web_content}", "html.parser")
+
+    def data_filter(self):
+        pass
+
+    # Classmethods
 
     @classmethod
     def webpage_txt(cls):
@@ -66,12 +78,3 @@ class WebPageData():
                 continue
             else:
                 return r.text
-
-
-    def html_parser(self, web_content:str) -> str:
-        pass
-
-
-    def data_filter(self, html, vote_count):
-        pass
-
