@@ -5,7 +5,8 @@ from bs4 import BeautifulSoup
 
 class WebPageData:
     """
-    Class named 'WebPageData', represents the webpage data from hacker news
+    Class named 'WebPageData', represents the webpage data from hacker
+    news website.
 
     Attributes
     ----------
@@ -14,7 +15,21 @@ class WebPageData:
     """
     url_hn = "https://news.ycombinator.com/news"
 
-    def __init__(self, web_content: str, vote_count: int) -> None:
+    def __init__(self, web_content: str, vote_count: int = 100) -> None:
+        """
+        The needed arguments to create an instance of WebPageData.
+
+        Parameters
+        ----------
+        web_content: str
+            The 'web_content'the string output from hacker news
+            website i.e. all html elements.
+
+        vote_count: int
+            The 'vote_count' parameter is the threshold data needs to
+             be exceeded or equal to for an article to be considered
+             an item of interest.
+        """
         self.web_content = web_content
         self.vote_count = vote_count
 
@@ -24,13 +39,13 @@ class WebPageData:
     def data_filter(self):
         pass
 
-    # Classmethods
+    # Class methods
 
     @classmethod
     def webpage_txt(cls):
         """
-        Class method called "webpage_txt", fetch data from webpage by "GET"
-        method.
+        Class method called "webpage_txt", fetch data from webpage
+        by "GET" method.
 
         Returns
         -------
@@ -40,8 +55,8 @@ class WebPageData:
         Raises
         ------
         ConnectionError
-            If maximum numbers of calls is exceed or it there is genuine
-            connection error to webpage.
+            If maximum numbers of calls is exceed or there is a
+            genuine connection error to the webpage.
 
         ConnectionTimeout
             If a server does not response within 3s of a call.
@@ -55,8 +70,8 @@ class WebPageData:
             For more information about session instance object.
 
         requests.api.get:
-            For more information about parameter 'timeout' and GET-method
-            used.
+            For more information about parameter 'timeout' and
+            GET-method used.
 
         """
         connector = rqs()
