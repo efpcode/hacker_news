@@ -4,32 +4,26 @@ from bs4 import BeautifulSoup
 
 
 class WebPageData:
-    """
-    Class named 'WebPageData', represents the webpage data from hacker
-    news website.
+    """'WebPageData', represents the webpage data from hacker news website.
 
     Attributes
     ----------
     url_hn : str
-        The source 'url_hn' for getting data from hacker news webpage.
+        The class attribute `url_hn` is for getting data from hacker
+        news webpage.
+    web_content : str
+        The instance attribute called `web_content` is the string
+        output from hacker news website.
+    vote_count : int
+        The instance attribute `vote_count` is the threshold value
+        for an article to be considered an item of interest. Default
+        value = 100.
+
     """
     url_hn = "https://news.ycombinator.com/news"
 
     def __init__(self, web_content: str, vote_count: int = 100) -> None:
-        """
-        The needed arguments to create an instance of WebPageData.
 
-        Parameters
-        ----------
-        web_content: str
-            The 'web_content'the string output from hacker news
-            website i.e. all html elements.
-
-        vote_count: int
-            The 'vote_count' parameter is the threshold data needs to
-             be exceeded or equal to for an article to be considered
-             an item of interest.
-        """
         self.web_content = web_content
         self.vote_count = vote_count
 
@@ -42,15 +36,14 @@ class WebPageData:
     # Class methods
 
     @classmethod
-    def webpage_txt(cls):
-        """
-        Class method called "webpage_txt", fetch data from webpage
-        by "GET" method.
+    def webpage_txt(cls) -> str:
+        """Class method `webpage_txt`, fetches data from a webpage
+        with "GET" method.
 
         Returns
         -------
         r.text : str
-            The 'r.text' is the string representation of the website.
+            The `r.text` is the string representation of the website.
 
         Raises
         ------
