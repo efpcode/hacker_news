@@ -27,8 +27,18 @@ class WebPageData:
         self.web_content = web_content
         self.vote_count = vote_count
 
-    def html_parser(self):
-        return BeautifulSoup(f"{self.web_content}", "html.parser")
+    def html_parser(self) -> BeautifulSoup:
+        try:
+            if not self.web_content:
+                raise ValueError("Expected instance attribute: `web_content` "
+                                 "to exists")
+        except ValueError as error:
+            empty = f"<p>This did not work has expected:\nError:\t " \
+                    f"{error}</p>"
+            Warning(error)
+            return BeautifulSoup(empty, "html.parser")
+        else:
+            return BeautifulSoup(f"{self.web_content}", "html.parser")
 
     def data_filter(self):
         pass
