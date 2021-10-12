@@ -6,14 +6,16 @@
 Welcome to hacker_news's documentation!
 =======================================
 .. include:: ../../README.rst
-    :start-after: inclusion-marker-do-not-remove
-
-.. automodule:: hacker_news.webpage_data
-   :members:
+   :start-after: inclusion-marker-do-not-remove
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+
+   quick-start
+   how-to-guides/howtoguide
+   tutorials/general
+   references
 
 
 
