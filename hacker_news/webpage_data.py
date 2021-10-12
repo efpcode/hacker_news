@@ -20,6 +20,7 @@ class WebPageData:
         value = 100.
 
     """
+
     url_hn = "https://news.ycombinator.com/news"
 
     def __init__(self, web_content: str, vote_count: int = 100) -> None:
@@ -30,11 +31,11 @@ class WebPageData:
     def html_parser(self) -> BeautifulSoup:
         try:
             if not self.web_content:
-                raise ValueError("Expected instance attribute: `web_content` "
-                                 "to exists")
+                raise ValueError(
+                    "Expected instance attribute: `web_content` " "to exists"
+                )
         except ValueError as error:
-            empty = f"<p>This did not work has expected:\nError:\t " \
-                    f"{error}</p>"
+            empty = f"<p>This did not work has expected:\nError:\t " f"{error}</p>"
             Warning(error)
             return BeautifulSoup(empty, "html.parser")
         else:
@@ -83,9 +84,11 @@ class WebPageData:
             count += 1
             try:
                 if count > 5:
-                    raise ConnectionError("Attempts exceeded threshold of "
-                                          "maximum number of calls to "
-                                          "webpage.")
+                    raise ConnectionError(
+                        "Attempts exceeded threshold of "
+                        "maximum number of calls to "
+                        "webpage."
+                    )
                 response = connector.get(url=cls.url_hn, timeout=3)
 
             except (ConnectionError, ConnectTimeout) as errors:
