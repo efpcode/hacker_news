@@ -42,6 +42,9 @@ class WebPageData:
             return BeautifulSoup(f"{self.web_content}", "html.parser")
 
     def data_filter(self):
+        """
+        Test docstring
+        """
         pass
 
     # Class methods
