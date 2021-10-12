@@ -86,13 +86,15 @@ class WebPageData:
                     raise ConnectionError("Attempts exceeded threshold of "
                                           "maximum number of calls to "
                                           "webpage.")
-                r = connector.get(url=cls.url_hn, timeout=3)
+                response = connector.get(url=cls.url_hn, timeout=3)
 
             except (ConnectionError, ConnectTimeout) as errors:
-                print(f"{r.reason}:\n {errors}")
+                print(f"{response.reason}:\n {errors}")
                 continue
             except HTTPError as error:
-                print(f"{r.reason}:\nHTTP error: {error}")
+                print(f"{response.reason}:\nHTTP error: {error}")
                 continue
             else:
-                return r.text
+                connector.close()
+                response.close()
+                return response.text
