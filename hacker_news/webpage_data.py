@@ -46,7 +46,6 @@ class WebPageData:
         Test docstring
         """
         return
-        pass
 
     # Class methods
 
