@@ -35,7 +35,7 @@ class WebPageData:
                     "Expected instance attribute: `web_content` " "to exists"
                 )
         except ValueError as error:
-            empty = f"<p>This did not work has expected:\nError:\t " f"{error}</p>"
+            empty = f"<p>This did not work has expected:\n" f"{error}</p>"
             Warning(error)
             return BeautifulSoup(empty, "html.parser")
         else:
@@ -45,6 +45,7 @@ class WebPageData:
         """
         Test docstring
         """
+        return
         pass
 
     # Class methods
