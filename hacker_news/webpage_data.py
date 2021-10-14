@@ -29,6 +29,28 @@ class WebPageData:
         self.vote_count = vote_count
 
     def html_parser(self) -> BeautifulSoup:
+        """Parses web content.
+
+        The method parses the web content in `url_hn` and returns a
+        BeautifulSoup object, that function like a css selector.
+
+        Returns
+        -------
+        BeautifulSoup : object
+            The `BeautifulSoup` object returned, is an actual instance
+            of a BeautifulSoup class.
+
+        Raises
+        ------
+            ValueError is raised if class instance property
+            `web_content` is empty.
+
+        See Also
+        --------
+            bs4.BeautifulSoup for more information a about css selector
+            and parse methods used.
+
+        """
         try:
             if not self.web_content:
                 raise ValueError(
@@ -86,13 +108,17 @@ class WebPageData:
         while count <= 5:
             count += 1
             try:
+                response = connector.get(url=cls.url_hn, timeout=3)
                 if count > 5:
-                    raise ConnectionError(
+                    raise ValueError(
                         "Attempts exceeded threshold of "
                         "maximum number of calls to "
                         "webpage."
                     )
-                response = connector.get(url=cls.url_hn, timeout=3)
+
+            except ValueError as error:
+                print(error)
+                continue
 
             except (ConnectionError, ConnectTimeout) as errors:
                 print(f"{response.reason}:\n {errors}")
