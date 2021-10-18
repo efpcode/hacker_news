@@ -29,6 +29,32 @@ class WebPageData:
         self.vote_count = vote_count
 
     @staticmethod
+    def _ascending_order(news_dict: dict) -> dict:
+        """Reorders a dictionary in ascending order.
+
+        Parameters
+        ----------
+        news_dict : dict
+            A custom created nested dictionary-like data structure
+            that is generated in staticmethod called data_filter.
+
+        Returns
+        -------
+        new_order : dict
+            A descending ordered dictionary-like data type based on
+            the number of points an article has.
+        """
+        # fmt: off
+        new_order = {
+            k: v for k, v in sorted(
+                news_dict.items(),
+                key=lambda x: x[1][1],
+                reverse=True)
+        }
+        # fmt: on
+        return new_order
+
+    @staticmethod
     def html_parser(web_content: str) -> BeautifulSoup:
         """Parses web content.
 
@@ -52,14 +78,13 @@ class WebPageData:
         TypeError
             This error is raised if `web_content` is passed as none
             or null.
-
         ValueError
              This error is raised if `web_content` is not passed with
              string content.
 
         See Also
         --------
-        bs4.BeautifulSoup :
+        bs4.BeautifulSoup : object
             For more information a about css selector and parse
             methods used.
 
@@ -76,9 +101,30 @@ class WebPageData:
             return BeautifulSoup(f"{web_content}", "html.parser")
 
     @staticmethod
-    def data_filter(data_parsed, nr_points=100):
-        """
-        Test docstring
+    def data_filter(data_parsed, nr_points=100, ordered_data=True) -> dict:
+        """Helper method that filter web content by threshold.
+
+        The method filters the web content on an arbitrary threshold,
+        that can be modified by user.
+
+        Parameters
+        ----------
+        data_parsed : bs4.BeautifulSoup(object)
+            The `data_parsed` parameter is the return value from
+            static method called WebPageData.html_parser.
+        nr_points: int
+            The threshold that needs to be exceed for an article to be
+            picked. Default value is set to 100.
+        ordered_data : bool
+            Sorts in ascending order the generated dictionary-like
+            data structure. For unsorted returns change value from
+            default to False. Default value is set to True.
+
+        Returns
+        -------
+        new_dict : dict
+            The `new_dict` is a dictionary-like data type (see below).
+            The value-pairs: {Key:[title, score, link]}
         """
         news_dict = {}
         for i, v in enumerate(data_parsed.find_all("a", class_="storylink")):
@@ -94,14 +140,17 @@ class WebPageData:
                 news_dict.update(
                     {f"article_{i}": [f"{v.text}", score, f"{v.get('href')}"]}
                 )
+
+        if ordered_data:
+            news_dict = WebPageData._ascending_order(news_dict)
+
         return news_dict
 
     # Class methods
 
     @classmethod
     def webpage_txt(cls) -> str:
-        """Class method `webpage_txt`, fetches data from a webpage
-        with "GET" method.
+        """Fetches data from a webpage with "GET" method.
 
         Returns
         -------
@@ -113,10 +162,8 @@ class WebPageData:
         ConnectionError
             If maximum numbers of calls is exceed or there is a
             genuine connection error to the webpage.
-
         ConnectionTimeout
             If a server does not response within 3s of a call.
-
         HTTPError
             If a http error is prompted.
 
@@ -124,7 +171,6 @@ class WebPageData:
         --------
         requests.session.Session:
             For more information about session instance object.
-
         requests.api.get:
             For more information about parameter 'timeout' and
             GET-method used.
