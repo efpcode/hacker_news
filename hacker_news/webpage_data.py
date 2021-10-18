@@ -28,11 +28,18 @@ class WebPageData:
         self.web_content = web_content
         self.vote_count = vote_count
 
-    def html_parser(self) -> BeautifulSoup:
+    @staticmethod
+    def html_parser(web_content: str) -> BeautifulSoup:
         """Parses web content.
 
         The method parses the web content in `url_hn` and returns a
         BeautifulSoup object, that function like a css selector.
+
+        Parameters
+        ----------
+        web_content : str
+            The `web_content` parameter is a string object that
+            contains html text.
 
         Returns
         -------
@@ -42,32 +49,52 @@ class WebPageData:
 
         Raises
         ------
-            ValueError is raised if class instance property
-            `web_content` is empty.
+        TypeError
+            This error is raised if `web_content` is passed as none
+            or null.
+
+        ValueError
+             This error is raised if `web_content` is not passed with
+             string content.
 
         See Also
         --------
-            bs4.BeautifulSoup for more information a about css selector
-            and parse methods used.
+        bs4.BeautifulSoup :
+            For more information a about css selector and parse
+            methods used.
 
         """
         try:
-            if not self.web_content:
-                raise ValueError(
-                    "Expected instance attribute: `web_content` " "to exists"
-                )
+            if not web_content:
+                raise ValueError("Expected: to have string/web content")
         except ValueError as error:
             empty = f"<p>This did not work has expected:\n" f"{error}</p>"
             Warning(error)
             return BeautifulSoup(empty, "html.parser")
-        else:
-            return BeautifulSoup(f"{self.web_content}", "html.parser")
 
-    def data_filter(self):
+        else:
+            return BeautifulSoup(f"{web_content}", "html.parser")
+
+    @staticmethod
+    def data_filter(data_parsed, nr_points=100):
         """
         Test docstring
         """
-        return
+        news_dict = {}
+        for i, v in enumerate(data_parsed.find_all("a", class_="storylink")):
+            # fmt: off
+            score = (data_parsed.find_all("td", class_="subtext")[i].select(
+                ".score")
+            )
+            # fmt: on
+            if score:
+                score = int(score[0].getText().split(" ")[0])
+                if score < nr_points:
+                    continue
+                news_dict.update(
+                    {f"article_{i}": [f"{v.text}", score, f"{v.get('href')}"]}
+                )
+        return news_dict
 
     # Class methods
 
@@ -123,9 +150,11 @@ class WebPageData:
             except (ConnectionError, ConnectTimeout) as errors:
                 print(f"{response.reason}:\n {errors}")
                 continue
+
             except HTTPError as error:
                 print(f"{response.reason}:\nHTTP error: {error}")
                 continue
+
             else:
                 connector.close()
                 response.close()
