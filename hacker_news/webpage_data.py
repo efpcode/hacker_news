@@ -45,12 +45,10 @@ class WebPageData:
             the number of points an article has.
         """
         # fmt: off
-        new_order = {
-            k: v for k, v in sorted(
-                news_dict.items(),
-                key=lambda x: x[1][1],
-                reverse=True)
-        }
+        new_order = {}
+        for key, val in sorted(
+                news_dict.items(), key=lambda x: x[1][1], reverse=True):
+            new_order.update({key: val})
         # fmt: on
         return new_order
 
