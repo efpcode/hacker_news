@@ -28,6 +28,17 @@ class WebPageData:
         self.web_content = web_content
         self.vote_count = vote_count
 
+    def __str__(self):
+        """A user friendly prompt of the instance."""
+        return f"Fetched data from {self.url_hn}:\n [Title, Points, Link]"
+
+    def __repr__(self):
+        """The representation of a instance object of class."""
+        return (
+            f"WebPageData(web_content=WebPageData.webpage_txt(), "
+            f"vote_count= {self.vote_count})"
+        )
+
     @staticmethod
     def _ascending_order(news_dict: dict) -> dict:
         """Reorders a dictionary in ascending order.
