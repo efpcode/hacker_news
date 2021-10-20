@@ -1,3 +1,28 @@
+"""The module webpage_data fetches data from hacker news.
+
+Notes
+-----
+This module is not executable as script and class should be imported
+as shown in `Example`
+
+See Also
+--------
+hacker_news.webpage_data.WebPageData :
+    For more information on how data fetch from source webpage.
+
+Example
+-------
+>>> from webpage_data import WebPageData
+
+>>> web_obj = WebPageData(WebPageData.webpage_txt(), vote_count= 150)
+
+>>> print(web_obj)
+Fetched data from https://news.ycombinator.com/news:
+ [Title, Points, Link]
+
+"""
+
+
 from requests import Session as rqs
 from requests import ConnectTimeout, ConnectionError, HTTPError
 from bs4 import BeautifulSoup
