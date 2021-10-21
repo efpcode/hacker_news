@@ -170,7 +170,7 @@ class WebPageData:
                 news_list.append([f"{v.text}", score, f"{v.get('href')}"])
 
         if ordered_data:
-            news_list = WebPageData._ascending_order(news_list)
+            news_list = WebPageData._descending_order(news_list)
 
         return news_list
 
