@@ -66,13 +66,13 @@ class WebPageData:
 
     @staticmethod
     def _descending_order(data_list: list) -> list:
-        """Reorders a dictionary in ascending order.
+        """Reorders a list in descending order.
 
         Parameters
         ----------
-        news_dict : dict
-            A custom created nested dictionary-like data structure
-            that is generated in staticmethod called data_filter.
+        data_list : list
+            A nested list data structure that is generated in
+            staticmethod called data_filter.
 
         Returns
         -------
@@ -146,7 +146,7 @@ class WebPageData:
             The threshold that needs to be exceed for an article to be
             picked. Default value is set to 100.
         ordered_data : bool
-            Sorts in ascending order the generated dictionary-like
+            Sorts in descending order the generated nested list
             data structure. For unsorted returns change value from
             default to False. Default value is set to True.
 
