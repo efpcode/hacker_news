@@ -187,9 +187,11 @@ class WebPageData:
 
         Raises
         ------
+        ValueError
+            If the maximum numbers of calls to the website exceeds or
+            equals the set limit of 5.
         ConnectionError
-            If maximum numbers of calls is exceed or there is a
-            genuine connection error to the webpage.
+            If there is a genuine connection error to the webpage.
         ConnectionTimeout
             If a server does not response within 3s of a call.
         HTTPError
