@@ -65,28 +65,24 @@ class WebPageData:
         )
 
     @staticmethod
-    def _ascending_order(news_dict: dict) -> dict:
-        """Reorders a dictionary in ascending order.
+    def _descending_order(data_list: list) -> list:
+        """Reorders a list in descending order.
 
         Parameters
         ----------
-        news_dict : dict
-            A custom created nested dictionary-like data structure
-            that is generated in staticmethod called data_filter.
+        data_list : list
+            A nested list data structure that is generated in
+            staticmethod called data_filter.
 
         Returns
         -------
-        new_order : dict
-            A descending ordered dictionary-like data type based on
+        news_list_sorted : list
+            A descending ordered nested-list data type based on
             the number of points an article has.
         """
-        # fmt: off
-        new_order = {}
-        for key, val in sorted(
-                news_dict.items(), key=lambda x: x[1][1], reverse=True):
-            new_order.update({key: val})
-        # fmt: on
-        return new_order
+        news_list_sorted = data_list.sort(key=lambda x: x[1], reverse=True)
+
+        return news_list_sorted
 
     @staticmethod
     def html_parser(web_content: str) -> BeautifulSoup:
@@ -150,18 +146,18 @@ class WebPageData:
             The threshold that needs to be exceed for an article to be
             picked. Default value is set to 100.
         ordered_data : bool
-            Sorts in ascending order the generated dictionary-like
+            Sorts in descending order the generated nested list
             data structure. For unsorted returns change value from
             default to False. Default value is set to True.
 
         Returns
         -------
-        new_dict : dict
-            The `new_dict` is a dictionary-like data type (see below).
-            The value-pairs: {Key:[title, score, link]}
+        news_list : list
+            The `news_list` is a nested-list data type (see below).
+            The items: [[title, score, link],[title, score, link]...]
         """
-        news_dict = {}
-        for i, v in enumerate(data_parsed.find_all("a", class_="storylink")):
+        news_list = []
+        for i, v in enumerate(data_parsed.find_all("a", class_="titlelink")):
             # fmt: off
             score = (data_parsed.find_all("td", class_="subtext")[i].select(
                 ".score")
@@ -171,14 +167,12 @@ class WebPageData:
                 score = int(score[0].getText().split(" ")[0])
                 if score < nr_points:
                     continue
-                news_dict.update(
-                    {f"article_{i}": [f"{v.text}", score, f"{v.get('href')}"]}
-                )
+                news_list.append([f"{v.text}", score, f"{v.get('href')}"])
 
         if ordered_data:
-            news_dict = WebPageData._ascending_order(news_dict)
+            news_list = WebPageData._ascending_order(news_list)
 
-        return news_dict
+        return news_list
 
     # Class methods
 
