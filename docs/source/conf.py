@@ -39,6 +39,10 @@ extensions = [
     "sphinx.ext.viewcode",
 ]
 
+autodoc_default_options = {
+    "member-order": "bysource",
+}
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
@@ -60,7 +64,11 @@ html_theme = "alabaster"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = [""]
-html_theme_options = {"body_max_width": "none", "page_width": "80em"}
+html_theme_options = {
+    "body_max_width": "none",
+    "page_width": "85em",
+    "sidebar_width": "18em",
+}
 
 # EPUB options
 epub_show_urls = "footnote"
