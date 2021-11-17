@@ -5,64 +5,78 @@ Notes
 This module is not executable as script and class should be imported
 as shown in `Example`
 
-See Also
---------
-hacker_news.webpage_data.WebPageData :
-    For more information on how data fetch from source webpage.
-
 Example
 -------
 >>> from webpage_data import WebPageData
 
->>> web_obj = WebPageData(WebPageData.webpage_txt(), vote_count= 150)
+>>> web_obj = WebPageData(5, votes= 150)
 
 >>> print(web_obj)
-Fetched data from https://news.ycombinator.com/news:
+Fetched data from hacker news:
  [Title, Points, Link]
 
 """
 
-
+from time import sleep
 from requests import Session as rqs
 from requests import ConnectTimeout, ConnectionError, HTTPError
 from bs4 import BeautifulSoup
 
 
 class WebPageData:
-    """'WebPageData', represents the webpage data from hacker news website.
+    """WebPageData, represents the webpage data from hacker news website.
 
     Attributes
     ----------
-    url_hn : str
-        The class attribute `url_hn` is for getting data from hacker
-        news webpage.
-    web_content : str
-        The instance attribute called `web_content` is the string
-        output from hacker news website.
-    vote_count : int
-        The instance attribute `vote_count` is the threshold value
+    web_content : WebResponse(web_content: int)
+        The instance attribute called `web_content` is a class instance
+        of WebResponse.
+    votes : int
+        The instance attribute `votes` is the threshold value
         for an article to be considered an item of interest. Default
         value = 100.
 
+    See Also
+    --------
+    hacker_news.webpage_data.WebResponse : object
+        For more information about instance methods.
+
     """
 
-    url_hn = "https://news.ycombinator.com/news"
+    def __init__(self, web_content: int, votes: int = 100) -> None:
 
-    def __init__(self, web_content: str, vote_count: int = 100) -> None:
-
-        self.web_content = web_content
-        self.vote_count = vote_count
+        self.web_content = WebResponse(web_content)
+        self.votes = votes
 
     def __str__(self):
         """A user friendly prompt of the instance."""
-        return f"Fetched data from {self.url_hn}:\n [Title, Points, Link]"
+        return "Fetched data from hacker news:\n [Title, Points, Link]"
 
     def __repr__(self):
         """The representation of a instance object of class."""
         return (
-            f"WebPageData(web_content=WebPageData.webpage_txt(), "
-            f"vote_count= {self.vote_count})"
+            f"WebPageData(web_content=WebResponse("
+            f"{self.web_content.nr_webpages}), "
+            f"votes={self.votes})"
         )
+
+    def get_articles(self):
+        """Gets articles that meet filtering criteria.
+
+        Returns
+        -------
+        articles : list
+            The return value `articles` is a nested list.
+
+        """
+
+        articles = []
+        for page in iter(self.web_content.get_response()):
+            html_parse = WebPageData.html_parser(page)
+            article = WebPageData.data_filter(html_parse, nr_points=self.votes)
+            articles.append(article)
+
+        return articles
 
     @staticmethod
     def _descending_order(data_list: list) -> list:
@@ -76,19 +90,19 @@ class WebPageData:
 
         Returns
         -------
-        news_list_sorted : list
+        data_list : list
             A descending ordered nested-list data type based on
             the number of points an article has.
         """
-        news_list_sorted = data_list.sort(key=lambda x: x[1], reverse=True)
+        data_list.sort(key=lambda x: x[1], reverse=True)
 
-        return news_list_sorted
+        return data_list
 
     @staticmethod
     def html_parser(web_content: str) -> BeautifulSoup:
         """Parses web content.
 
-        The method parses the web content in `url_hn` and returns a
+        The method parses the web content in url_hn and returns a
         BeautifulSoup object, that function like a css selector.
 
         Parameters
@@ -100,7 +114,7 @@ class WebPageData:
         Returns
         -------
         BeautifulSoup : object
-            The `BeautifulSoup` object returned, is an actual instance
+            The BeautifulSoup object returned, is an actual instance
             of a BeautifulSoup class.
 
         Raises
@@ -131,7 +145,7 @@ class WebPageData:
             return BeautifulSoup(f"{web_content}", "html.parser")
 
     @staticmethod
-    def data_filter(data_parsed, nr_points=100, ordered_data=True) -> dict:
+    def data_filter(data_parsed, nr_points=100, ordered_data=True) -> list:
         """Helper method that filter web content by threshold.
 
         The method filters the web content on an arbitrary threshold,
@@ -140,7 +154,7 @@ class WebPageData:
         Parameters
         ----------
         data_parsed : bs4.BeautifulSoup(object)
-            The `data_parsed` parameter is the return value from
+            The data_parsed parameter is the return value from
             static method called WebPageData.html_parser.
         nr_points: int
             The threshold that needs to be exceed for an article to be
@@ -155,6 +169,7 @@ class WebPageData:
         news_list : list
             The `news_list` is a nested-list data type (see below).
             The items: [[title, score, link],[title, score, link]...]
+
         """
         news_list = []
         for i, v in enumerate(data_parsed.find_all("a", class_="titlelink")):
@@ -174,22 +189,63 @@ class WebPageData:
 
         return news_list
 
-    # Class methods
 
-    @classmethod
-    def webpage_txt(cls) -> str:
-        """Fetches data from a webpage with "GET" method.
+class WebResponse:
+    """The representation of hacker news get response.
+
+    Attributes
+    ----------
+    url_hn : str
+        The class attribute `url_hn` is for getting data from hacker
+        news webpage.
+
+    """
+
+    url_hn = "https://news.ycombinator.com/news?p=0"
+
+    def __init__(self, nr_webpages: int, get_data: list = None):
+
+        self.nr_webpages = nr_webpages
+        self.get_data = get_data
+
+    @property
+    def get_data(self):
+        """list: Get current webcrawl response."""
+        return self._get_data
+
+    @get_data.setter
+    def get_data(self, html_txt):
+        self._get_data = html_txt
+
+    @property
+    def nr_webpages(self):
+        """int: Get current number of pages to webcrawl.
+
+        All values for`nr_webpages` <= 0, are converted to 1.
+        """
+        return self._nr_webpages
+
+    @nr_webpages.setter
+    def nr_webpages(self, nr_pages):
+        if nr_pages <= 0:
+            nr_pages = 1
+        self._nr_webpages = nr_pages
+
+    def get_response(self, pages=None) -> list:
+        """Fetches data from a hacker news with GET method.
+
+        Parameters
+        ----------
+        pages : int
+            The number of `pages` that should be web crawled.
 
         Returns
         -------
-        r.text : str
-            The `r.text` is the string representation of the website.
+        r_text : list
+            The `r.text` is the list representation of the website.
 
         Raises
         ------
-        ValueError
-            If the maximum numbers of calls to the website exceeds or
-            equals the set limit of 5.
         ConnectionError
             If there is a genuine connection error to the webpage.
         ConnectionTimeout
@@ -202,26 +258,19 @@ class WebPageData:
         requests.session.Session:
             For more information about session instance object.
         requests.api.get:
-            For more information about parameter 'timeout' and
-            GET-method used.
+            For more information about parameter `timeout`.
 
         """
         connector = rqs()
-        count = 0
-        while count <= 5:
-            count += 1
+        r_text = []
+        stem = self.url_hn.split("=", maxsplit=1)[0]
+        if not pages:
+            pages = self.nr_webpages
+        nr_pages = ["".join([stem, f"={i}"]) for i in range(pages)]
+        for page in nr_pages:
+            sleep(0.075)
             try:
-                response = connector.get(url=cls.url_hn, timeout=3)
-                if count > 5:
-                    raise ValueError(
-                        "Attempts exceeded threshold of "
-                        "maximum number of calls to "
-                        "webpage."
-                    )
-
-            except ValueError as error:
-                print(error)
-                continue
+                response = connector.get(url=page, timeout=3)
 
             except (ConnectionError, ConnectTimeout) as errors:
                 print(f"{response.reason}:\n {errors}")
@@ -234,4 +283,7 @@ class WebPageData:
             else:
                 connector.close()
                 response.close()
-                return response.text
+                r_text.append(response.text)
+            self._nr_webpages = pages
+            self._get_data = r_text
+        return r_text
